@@ -1,5 +1,5 @@
 #include "ServoEx.h"
-#include "InputControl.h"
+#include "Kinematics.h"
 
 ServoEx ArmServo[5];
 
@@ -15,7 +15,7 @@ void setup(){
   ArmServo[GRI_SERVO].attach(13, GRIPPER_MIN, GRIPPER_MAX);
 
   // Start serial
-  Serial.begin(9600);
+  Serial.begin(115200);
 }
 
 // Define number of pieces
@@ -64,9 +64,8 @@ void loop(){
       g_sIKY = pieces[1].toFloat();
       g_sIKZ = pieces[2].toFloat();
       g_sIKGA = pieces[3].toFloat();
-      doArmIK(true, g_sIKX, g_sIKY, g_sIKZ, g_sIKGA);
-      MoveArmTo(sBase, sShoulder, sElbow, sWrist, sWristRot, sGrip, sDeltaTime,
-                true);
+      doArmIKLimits(g_sIKX, g_sIKY, g_sIKZ, g_sIKGA);
+      MoveArmTo(sBase, sShoulder, sElbow, sWrist, sWristRot, sGrip);
       SetServo(0);
 
       // Clear out string and counters to get ready for the next incoming string

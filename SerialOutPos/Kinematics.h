@@ -11,7 +11,6 @@
 extern ServoEx ArmServo[5];
 boolean g_fArmActive = false;      // Is the arm logically on?
 boolean g_fServosFree;             // Are the servos free?
-uint8_t g_bIKStatus = IKS_SUCCESS; // Status of last call to DoArmIK
 
 
 //=============================================================================
@@ -54,8 +53,7 @@ int sBase, sShoulder, sElbow, sWrist, sWristRot, sGrip = 1500;
 // z is height, y is distance from base center out, x is side to side
 // y,z can only be positive
 //=============================================================================
-boolean doArmIK(boolean fCartesian, float x, float y, float z,
-                float grip_angle_d) {
+void doArmIK(float x, float y, float z, float grip_angle_d) {
   // Grip angle in radians for use in calculations
   float grip_angle_r = radians( grip_angle_d );
 
@@ -107,7 +105,7 @@ boolean doArmIK(boolean fCartesian, float x, float y, float z,
 // MoveArmTo
 //=============================================================================
 void MoveArmTo(int sBase, int sShoulder, int sElbow, int sWrist, int sWristRot,
-               int sGrip, int wTime, boolean fWait) {
+               int sGrip) {
   // Make sure servos are not free
   if (g_fServosFree) {
     g_fServosFree = false;
@@ -136,7 +134,7 @@ void MoveArmToHome(void) {
     sElbow = 1500;
     sWrist = 1500;
     
-    MoveArmTo(sBase, sShoulder, sElbow, sWrist, 512, 256, 2000, true);
+    MoveArmTo(sBase, sShoulder, sElbow, sWrist, 512, 256);
     g_fArmActive = false;
 }
 
@@ -151,6 +149,12 @@ void SetServo(unsigned int DeltaTime) {
   ArmServo[WRI_SERVO].writeMicroseconds(Wrist + WRI_SERVO_ERROR);
   ArmServo[GRI_SERVO].writeMicroseconds(Gripper + GRI_SERVO_ERROR);
   ServoGroupMove.commit(DeltaTime);
+}
+
+void doArmIKLimits(float x, float y, float z, float grip_angle_d) {
+  if (x > IK_MIN_X && x < IK_MAX_X && y > IK_MIN_Y && y < IK_MAX_Y &&
+      z > IK_MIN_Z && z < IK_MAX_Z && grip_angle_d > IK_MIN_GA &&
+      grip_angle_d < IK_MAX_GA) doArmIK(x, y, z, grip_angle_d);
 }
 
 #endif

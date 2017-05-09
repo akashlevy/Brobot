@@ -13,12 +13,12 @@
 void zero_x()
 {
   for(double yaxis = 150.0; yaxis < 200.0; yaxis += 1){
-    doArmIK(true, 0, yaxis, 100.0, 0);
+    doArmIK(0, yaxis, 100.0, 0);
     SetServo(0);
     delay(10);
   }
   for(double yaxis = 200.0; yaxis > 150.0; yaxis -= 1){
-    doArmIK(true, 0, yaxis, 100.0, 0);
+    doArmIK(0, yaxis, 100.0, 0);
     SetServo(0);
     delay(10);
   }
@@ -28,12 +28,12 @@ void zero_x()
 void line()
 {
     for(double xaxis = -100.0; xaxis < 100.0; xaxis += 0.5){
-      doArmIK(true, xaxis, 200, 100, 0);
+      doArmIK(xaxis, 200, 100, 0);
       SetServo(0);
       delay(10);
     }
     for(float xaxis = 100.0; xaxis > -100.0; xaxis -= 0.5){
-      doArmIK(true, xaxis, 200, 100, 0);
+      doArmIK(xaxis, 200, 100, 0);
       SetServo(0);
       delay(10);
     }
@@ -47,7 +47,7 @@ void circle()
   for(float angle = 0.0; angle < 360.0; angle += 1.0){
       yaxis = RADIUS * sin(radians(angle)) + 150;
       zaxis = RADIUS * cos(radians(angle)) + 150;
-      doArmIK(true, 0, yaxis, zaxis, 0);
+      doArmIK(0, yaxis, zaxis, 0);
       SetServo(0);
       delay(5);
   }

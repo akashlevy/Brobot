@@ -8,8 +8,8 @@
 #define IK_MAX_Y 200
 #define IK_MIN_Y 50
 
-#define IK_MAX_Z 225
-#define IK_MIN_Z 20
+#define IK_MAX_Z 275
+#define IK_MIN_Z 80
 
 #define IK_MAX_GA 30
 #define IK_MIN_GA -30
@@ -53,8 +53,5 @@ float Shoulder = 1500;
 float Elbow    = 1500;
 float Wrist    = 1500;
 int   Gripper  = 1500;
-
-// Time between call and action
-unsigned int sDeltaTime = 0;
 
 #endif
