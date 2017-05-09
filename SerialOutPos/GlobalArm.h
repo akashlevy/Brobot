@@ -8,7 +8,7 @@
 #define IK_MAX_Y 200
 #define IK_MIN_Y 50
 
-#define IK_MAX_Z 275
+#define IK_MAX_Z 260
 #define IK_MIN_Z 80
 
 #define IK_MAX_GA 30
@@ -45,13 +45,6 @@ enum { BAS_SERVO, SHL_SERVO, ELB_SERVO, WRI_SERVO, GRI_SERVO };
 #define SHL_SERVO_ERROR 0 // (+ is forward, - is backward)
 #define ELB_SERVO_ERROR 0 // (+ is up, - is down)
 #define WRI_SERVO_ERROR 0 // (+ is up, - is down)
-#define GRI_SERVO_ERROR 0 // (+ is tighten grip, - is loosen grip) 
-
-// Present positions of the servos 
-float Base     = 1500;
-float Shoulder = 1500;
-float Elbow    = 1500;
-float Wrist    = 1500;
-int   Gripper  = 1500;
+#define GRI_SERVO_ERROR 0 // (+ is tighten grip, - is loosen grip)
 
 #endif

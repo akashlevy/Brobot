@@ -14,16 +14,19 @@ void setup(){
   ArmServo[WRI_SERVO].attach(11, WRIST_MIN, WRIST_MAX);
   ArmServo[GRI_SERVO].attach(13, GRIPPER_MIN, GRIPPER_MAX);
 
+  // Initialize servo position
+  doArmIK(0, 185, 185, 0);
+  
   // Start serial
   Serial.begin(115200);
 }
 
 // Define number of pieces
-const int numberOfPieces = 4;
+const int numberOfPieces = 3;
 String pieces[numberOfPieces];
 
 // This will be the buffered string from Serial.read() up until \n
-// Should look something like "123,456,789,0"
+// Should look something like "123,456,789,"
 String input = "";
 
 // Keep track of current position in array
@@ -60,13 +63,11 @@ void loop(){
       }
 
       // Update the position
-      g_sIKX = pieces[0].toFloat();
-      g_sIKY = pieces[1].toFloat();
-      g_sIKZ = pieces[2].toFloat();
-      g_sIKGA = pieces[3].toFloat();
-      doArmIKLimits(g_sIKX, g_sIKY, g_sIKZ, g_sIKGA);
-      MoveArmTo(sBase, sShoulder, sElbow, sWrist, sWristRot, sGrip);
-      SetServo(0);
+      float x = pieces[0].toFloat();
+      float y = pieces[1].toFloat();
+      float z = pieces[2].toFloat();
+      float ga = map(z, 0, 300, 0, 90);
+      doArmIKLimits(x, y, z, ga);
 
       // Clear out string and counters to get ready for the next incoming string
       input = "";

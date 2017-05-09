@@ -44,7 +44,6 @@ void SampleListener::onInit(const Controller& controller) {
 
   // Open stream to Arduino serial port
   arduino = fopen("/dev/ttyACM0", "w");
-  //arduino.open("/dev/ttyACM0", ios::in | ios::out);
 }
 
 void SampleListener::onConnect(const Controller& controller) {
@@ -68,12 +67,12 @@ void SampleListener::onFrame(const Controller& controller) {
   // Get the most recent frame and report some basic information
   const Frame frame = controller.frame();
 
+  // Get the first hand
   HandList hands = frame.hands();
-  for (HandList::const_iterator hl = hands.begin(); hl != hands.end(); ++hl) {
-    // Get the first hand
-    const Hand hand = *hl;
+  const Hand hand = *hands.begin();
 
-    // Write palm's position to serial port
+  // Write palm's position to serial port
+  if (hands.count() > 0) {
     Vector handPos = hand.palmPosition();
     float xOffset = -250;
     float yOffset = 80;
@@ -84,6 +83,7 @@ void SampleListener::onFrame(const Controller& controller) {
     x = x + xOffset;
     y = y + yOffset;
     z = z + zOffset;
+    std::cout << x << ',' << y << ',' << z << std::endl;
     fprintf(arduino, "%f,%f,%f,0\n", x, y, z);
   }
 }
