@@ -107,19 +107,6 @@ void doArmIKLimits(float x, float y, float z, float grip_angle_d) {
   doArmIK(x, y, z, grip_angle_d);
 }
 
-void doArmIKLimitsInterp(float x, float y, float z, float grip_angle_d) {
-  float dx = x - sIKX;
-  float dy = y - sIKY;
-  float dz = z - sIKZ;
-  float r2 = dx*dx + dy*dy + dz*dz;
-
-  int num_steps = ceil(sqrt(r2) / 2);
-
-  for (int i = 0; i < num_steps; i++) {
-    doArmIKLimits(sIKX + dx/num_steps, sIKY + dy/num_steps, sIKZ + dz/num_steps, sIKGA);
-  }
-}
-
 #endif
 
 

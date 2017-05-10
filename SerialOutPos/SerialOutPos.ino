@@ -18,7 +18,7 @@ void setup(){
   doArmIK(0, 185, 185, 0);
   
   // Start serial
-  Serial.begin(115200);
+  Serial.begin(230400);
 }
 
 // Define number of pieces
@@ -66,7 +66,7 @@ void loop(){
       float x = pieces[0].toFloat();
       float y = pieces[1].toFloat();
       float z = pieces[2].toFloat();
-      float ga = map(z, 0, 300, 0, 90);
+      float ga = map(z, 0, 500, -30, 90);
       doArmIKLimits(x, y, z, ga);
 
       // Clear out string and counters to get ready for the next incoming string

@@ -10,6 +10,7 @@
 #include <cstring>
 #include <fstream>
 #include <stdio.h>
+#include <ctime>
 #include "Leap.h"
 using namespace std;
 
@@ -36,8 +37,12 @@ const std::string fingerNames[] = {"Thumb", "Index", "Middle", "Ring", "Pinky"};
 const std::string boneNames[] = {"Metacarpal", "Proximal", "Middle", "Distal"};
 const std::string stateNames[] = {"STATE_INVALID", "STATE_START", "STATE_UPDATE", "STATE_END"};
 
-//fstream arduino;
+// File abstraction for serial communication with arduino
 FILE *arduino;
+// State of the arduino
+bool state = 0;
+// Time since hand disappears
+std::clock_t start_time;
 
 void SampleListener::onInit(const Controller& controller) {
   std::cout << "Initialized" << std::endl;
@@ -71,20 +76,41 @@ void SampleListener::onFrame(const Controller& controller) {
   HandList hands = frame.hands();
   const Hand hand = *hands.begin();
 
+  Leap::GestureList gestures = frame.gestures();
+  for(Leap::GestureList::const_iterator gl = gestures.begin();
+      gl != gestures.end(); gl++) {
+    if ((*gl).type() == Leap::Gesture::TYPE_SCREEN_TAP) {
+      // Turn on the arm
+      state = 1;
+    }
+  }
+
   // Write palm's position to serial port
-  if (hands.count() > 0) {
-    Vector handPos = hand.palmPosition();
-    float xOffset = -250;
-    float yOffset = 80;
-    float zOffset = 200;
-    float x = handPos.y;
-    float y = -handPos.z;
-    float z = handPos.x;
-    x = x + xOffset;
-    y = y + yOffset;
-    z = z + zOffset;
-    std::cout << x << ',' << y << ',' << z << std::endl;
-    fprintf(arduino, "%f,%f,%f,0\n", x, y, z);
+  if (state) {
+    if (hands.count() > 0) {
+      start_time = std::clock();
+      Vector handPos = hand.palmPosition();
+      float xOffset = -250;
+      float yOffset = 80;
+      float zOffset = 250;
+      float x = handPos.y;
+      float y = -handPos.z;
+      float z = handPos.x;
+      x = x + xOffset;
+      y = y + yOffset;
+      z = z + zOffset;
+      std::cout << x << ',' << y << ',' << z << std::endl;
+      fprintf(arduino, "%f,%f,%f\n", x, y, z);
+    }
+    else {
+      double duration = (std::clock() - start_time) / (double) CLOCKS_PER_SEC;
+      std::cout << duration << endl;
+      if (duration > 0.05) {
+        // Reset arm position
+        fprintf(arduino, "0,185,230\n");
+        state = 0;
+      }
+    }
   }
 }
 
@@ -130,7 +156,7 @@ int main(int argc, char** argv) {
   std::cin.get();
 
   // Close serial port
-  fprintf(arduino, "0,185,185,0\n");
+  fprintf(arduino, "0,185,185\n");
   fclose(arduino);
 
   // Remove the sample listener when done
